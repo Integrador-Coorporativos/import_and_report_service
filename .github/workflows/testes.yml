@@ -38,10 +38,11 @@ jobs:
         run: ./mvnw jacoco:report
 
       - name: Publicar relatórios como artefatos
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: relatórios-de-teste
           path: |
             target/site/surefire-report.html
             target/site/jacoco/index.html
             target/surefire-reports/
+
