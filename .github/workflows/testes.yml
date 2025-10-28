@@ -44,3 +44,4 @@ jobs:
           path: |
             target/site/surefire-report.html
             target/surefire-reports/
+
