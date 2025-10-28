@@ -12,7 +12,7 @@ public class Classes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
+    @Column(name = "name",  nullable = false,  length = 255)
     private String name;
     private String semester;
     private int gradleLevel;
