@@ -13,8 +13,10 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
+
       - name: Dar permissão de execução ao mvnw
         run: chmod +x ./mvnw
+
       - name: Configurar Java
         uses: actions/setup-java@v3
         with:
@@ -35,15 +37,11 @@ jobs:
       - name: Gerar relatório Surefire HTML
         run: ./mvnw surefire-report:report
 
-      - name: Gerar relatório JaCoCo
-        run: ./mvnw jacoco:report
-
       - name: Publicar relatórios como artefatos
         uses: actions/upload-artifact@v4
         with:
-          name: relatórios-de-teste
+          name: relatorios-de-teste
           path: |
             target/site/surefire-report.html
-            target/site/jacoco/index.html
             target/surefire-reports/
 

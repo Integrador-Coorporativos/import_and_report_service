@@ -10,7 +10,10 @@ public class Courses {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(length = 255)
     private String name;
+
+    @Column(length = 500)
     private String description;
 
 

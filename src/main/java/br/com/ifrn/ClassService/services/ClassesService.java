@@ -16,7 +16,20 @@ public class ClassesService {
 
     public List<Classes> getAll() { return classesRepository.findAll(); }
     public Optional<Classes> getById(Integer id) { return classesRepository.findById(id); }
-    public Classes create(Classes turma) { return classesRepository.save(turma); }
+    public Classes create(Classes turma) {
+
+        if (turma.getName() == null) {
+            throw new IllegalArgumentException("Nome da turma não pode ser nulo");
+        }
+        if (turma.getName().isEmpty()) {
+            throw new IllegalArgumentException("Nome da turma não pode ser vazio");
+        }
+        if (turma.getName().length() > 255) {
+            throw new IllegalArgumentException("Nome da turma não pode exceder 255 caracteres");
+        }
+
+
+        return classesRepository.save(turma); }
     public Classes update(Integer id, Classes turmaDetails) {
         Classes turma = classesRepository.findById(id).orElseThrow();
         turma.setName(turmaDetails.getName());
