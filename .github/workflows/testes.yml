@@ -13,7 +13,8 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
-
+      - name: Dar permissão de execução ao mvnw
+        run: chmod +x ./mvnw
       - name: Configurar Java
         uses: actions/setup-java@v3
         with:
