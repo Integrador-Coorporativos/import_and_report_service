@@ -36,7 +36,7 @@ public class OpenApiConfig {
                 )
                 .servers(List.of(
                         new Server()
-                                .url("http://localhost:8080")
+                                .url("http://localhost:8081")
                                 .description("Servidor Local de Desenvolvimento")
                 ))
                 .tags(List.of(
@@ -46,7 +46,7 @@ public class OpenApiConfig {
                 ))
                 .externalDocs(new ExternalDocumentation()
                         .description("Documentação do Projeto")
-                        .url("https://github.com/eduardoferreiralima/atividadeJPA"))
+                        .url("https://github.com/Integrador-Coorporativos/class_service"))
                 .components(new Components());
     }
 }
