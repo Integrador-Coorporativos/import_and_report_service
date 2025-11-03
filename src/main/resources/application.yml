@@ -1,11 +1,15 @@
+server:
+  port: 8081
+
 spring:
   application:
-    name=ClassService
+    name: ClassService
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/spring_data
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://postgres:5432/classdb
+    username: user
+    password: pass
 
   jpa:
     hibernate:
@@ -13,4 +17,22 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-      show-sql: false
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://host.docker.internal:8080/realms/ifrn
+
+# Configuração do Swagger/OpenAPI
+springdoc:
+  swagger-ui:
+    path: /api/docs
+    url: /v3/api-docs
+    server-url: http://localhost:8081
+
+# Configuração global de CORS (opcional, mas útil no Swagger)
+cors:
+  allowed-origins: "*"
+  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
