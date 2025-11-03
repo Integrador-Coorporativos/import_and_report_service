@@ -5,6 +5,7 @@ import br.com.ifrn.ClassService.model.Classes;
 import br.com.ifrn.ClassService.services.ClassCommentsService;
 import br.com.ifrn.ClassService.services.ClassesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/classes/{id}/comments")
+@RequestMapping("/api/classes/{classId}/comments")
 @Tag(name = "Comments", description = "Operações relacionadas a comentários")
 public class ClassCommentsController {
 
@@ -22,11 +23,11 @@ public class ClassCommentsController {
     private ClassCommentsService commentService;
 
     @Autowired
-    ClassesService classesService;
+    private ClassesService classesService;
 
     @GetMapping
-    public ResponseEntity<List<ClassComments>> getByClass(@PathVariable Integer id) {
-        List<ClassComments> comments = commentService.getByTurma(id);
+    public ResponseEntity<List<ClassComments>> getByClass(@PathVariable Integer classId) {
+        List<ClassComments> comments = commentService.getByTurma(classId);
         if (comments.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -34,18 +35,26 @@ public class ClassCommentsController {
     }
 
     @PostMapping
-    public ResponseEntity<ClassComments> create(@PathVariable Integer id, @RequestBody ClassComments comment) {
-        // Recupera a classe pelo ID
-        Classes classe = classesService.getById(id)
+    public ResponseEntity<ClassComments> create(@PathVariable Integer classId, @RequestBody ClassComments comment) {
+        Classes classe = classesService.getById(classId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classe não encontrada"));
 
-        // Seta a classe no comentário
         comment.setClasse(classe);
 
-        // Cria o comentário
         ClassComments createdComment = commentService.create(comment);
-
-        // Retorna resposta 201 CREATED
         return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
+    }
+
+    @PutMapping("/{commentId}")
+    public ResponseEntity<ClassComments> update(@PathVariable Integer classId, @PathVariable Integer commentId, @RequestBody ClassComments comment) {
+        comment.setId(commentId);
+        return ResponseEntity.ok(commentService.update(comment));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> delete(@PathVariable Integer classId, @PathVariable Integer commentId) {
+
+        commentService.delete(commentId);
+        return ResponseEntity.noContent().build();
     }
 }

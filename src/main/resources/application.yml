@@ -19,6 +19,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://host.docker.internal:8080/realms/ifrn
+
 # Configuração do Swagger/OpenAPI
 springdoc:
   swagger-ui:

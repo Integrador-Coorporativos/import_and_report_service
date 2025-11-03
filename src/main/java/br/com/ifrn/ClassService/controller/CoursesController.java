@@ -3,6 +3,7 @@ package br.com.ifrn.ClassService.controller;
 import br.com.ifrn.ClassService.model.Courses;
 import br.com.ifrn.ClassService.services.CoursesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
