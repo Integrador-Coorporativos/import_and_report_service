@@ -1,9 +1,9 @@
 package br.com.ifrn.ClassService.controller;
 
+import br.com.ifrn.ClassService.dto.request.RequestCourseDTO;
 import br.com.ifrn.ClassService.model.Courses;
 import br.com.ifrn.ClassService.services.CoursesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +37,11 @@ public class CoursesController {
     }
 
     @PostMapping
-    public ResponseEntity<Courses> create(@RequestBody Courses course) {
-        Courses createdCourse = courseService.create(course);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
+    public ResponseEntity<Courses> create(@RequestBody RequestCourseDTO courseDTO) {
+        Courses createdCourse = new Courses();
+        createdCourse.setName(courseDTO.getName());
+        createdCourse.setDescription(courseDTO.getDescription());
+        return ResponseEntity.status(HttpStatus.CREATED).body(courseService.create(createdCourse));
     }
 
     @PutMapping("/{id}")
