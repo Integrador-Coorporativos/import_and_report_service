@@ -1,17 +1,18 @@
 package br.com.ifrn.ClassService.controller;
 
+import br.com.ifrn.ClassService.dto.request.RequestCommentDTO;
 import br.com.ifrn.ClassService.model.ClassComments;
 import br.com.ifrn.ClassService.model.Classes;
 import br.com.ifrn.ClassService.services.ClassCommentsService;
 import br.com.ifrn.ClassService.services.ClassesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,13 +36,18 @@ public class ClassCommentsController {
     }
 
     @PostMapping
-    public ResponseEntity<ClassComments> create(@PathVariable Integer classId, @RequestBody ClassComments comment) {
+    public ResponseEntity<ClassComments> create(@PathVariable Integer classId, @RequestParam Integer professorId, @RequestBody RequestCommentDTO commentDTO) {
         Classes classe = classesService.getById(classId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Classe não encontrada"));
 
-        comment.setClasse(classe);
+        ClassComments classComments = new ClassComments();
+        classComments.setClasse(classe);
+        classComments.setComment(commentDTO.getComment());
+        classComments.setCreatedAt(LocalDate.EPOCH);
+        classComments.setUpdatedAt(LocalDate.EPOCH);
+        classComments.setProfessorId(professorId);
 
-        ClassComments createdComment = commentService.create(comment);
+        ClassComments createdComment = commentService.create(classComments);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
     }
 

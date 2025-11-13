@@ -37,7 +37,7 @@ public class OpenApiConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Sistema de Acompanhamento de Desempenho e Comportamento")
+                        .title("SADT - Class Service")
                         .version("1.0.0")
                         .description("""
                             API para monitoramento acadêmico e comportamental de turmas e alunos do IFRN.

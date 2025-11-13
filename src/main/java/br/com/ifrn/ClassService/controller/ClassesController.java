@@ -1,13 +1,15 @@
 package br.com.ifrn.ClassService.controller;
 
+import br.com.ifrn.ClassService.dto.request.RequestClassDTO;
 import br.com.ifrn.ClassService.model.Classes;
+import br.com.ifrn.ClassService.model.Courses;
 import br.com.ifrn.ClassService.services.ClassesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,9 +39,18 @@ public class ClassesController {
     }
 
     @PostMapping
-    public ResponseEntity<Classes> create(@RequestBody Classes classes) {
-        Classes createdClasses = classesService.create(classes);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdClasses);
+    public ResponseEntity<Classes> create(@RequestParam Integer courseId, @RequestBody RequestClassDTO classDTO) {
+        Courses curso = classesService.getById(courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Curso não encontrado!")).getCourse();
+
+        Classes createdClasses = new Classes();
+        createdClasses.setCourse(curso);
+        createdClasses.setSemester(classDTO.getSemester());
+        createdClasses.setName(classDTO.getName());
+        createdClasses.setGradleLevel(classDTO.getGradleLevel());
+        createdClasses.setShift(classDTO.getShift());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(classesService.create(createdClasses));
     }
 
     @PutMapping("/{id}")
