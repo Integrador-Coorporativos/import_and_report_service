@@ -1,5 +1,6 @@
 package br.com.ifrn.ClassService.controller;
 
+import br.com.ifrn.ClassService.controller.docs.ClassCommentsControllerDocs;
 import br.com.ifrn.ClassService.dto.request.RequestCommentDTO;
 import br.com.ifrn.ClassService.model.ClassComments;
 import br.com.ifrn.ClassService.model.Classes;
@@ -17,8 +18,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/classes/{classId}/comments")
-@Tag(name = "Comments", description = "Operações relacionadas a comentários")
-public class ClassCommentsController {
+
+public class ClassCommentsController implements ClassCommentsControllerDocs {
 
     @Autowired
     private ClassCommentsService commentService;

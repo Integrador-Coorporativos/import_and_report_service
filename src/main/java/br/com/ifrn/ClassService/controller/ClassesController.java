@@ -1,5 +1,6 @@
 package br.com.ifrn.ClassService.controller;
 
+import br.com.ifrn.ClassService.controller.docs.ClassesControllerDocs;
 import br.com.ifrn.ClassService.dto.request.RequestClassDTO;
 import br.com.ifrn.ClassService.model.Classes;
 import br.com.ifrn.ClassService.model.Courses;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/classes")
 @Tag(name = "Classes", description = "Operações relacionadas a Turmas")
-public class ClassesController {
+public class ClassesController implements ClassesControllerDocs {
 
     @Autowired
     private ClassesService classesService;

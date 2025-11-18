@@ -1,9 +1,9 @@
 package br.com.ifrn.ClassService.controller;
 
+import br.com.ifrn.ClassService.controller.docs.CoursesControllerDocs;
 import br.com.ifrn.ClassService.dto.request.RequestCourseDTO;
 import br.com.ifrn.ClassService.model.Courses;
 import br.com.ifrn.ClassService.services.CoursesService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/courses")
-@Tag(name = "Courses", description = "Operações relacionadas a Cursos")
-public class CoursesController {
+public class CoursesController implements CoursesControllerDocs {
 
     @Autowired
     private CoursesService courseService;

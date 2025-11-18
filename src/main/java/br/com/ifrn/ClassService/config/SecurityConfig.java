@@ -34,7 +34,8 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/api/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/docs/**" // Seu caminho personalizado
+            "/api/docs/**",
+            "/actuator/**"
     };
 
     /**
