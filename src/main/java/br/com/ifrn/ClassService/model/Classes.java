@@ -18,6 +18,8 @@ public class Classes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+
+
     @Column(name = "name",  nullable = false,  length = 255)
     private String name;
     private String semester;
@@ -30,5 +32,10 @@ public class Classes {
 
     @OneToMany(mappedBy = "classe")
     private List<ClassComments> comments;
+
+    @ElementCollection
+    private List<String> userId;
+
+    private String classId; //id da turma fornecido na planilha
 
 }

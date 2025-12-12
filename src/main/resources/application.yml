@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8082
   error:
     include-message: always
     include-binding-errors: always
@@ -7,6 +7,9 @@ server:
 spring:
   application:
     name: ClassService
+
+  config:
+    import: "optional:dotenv:.env"
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -22,18 +25,18 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://host.docker.internal:8080/realms/ifrn
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
 
 # Configuração do Swagger/OpenAPI
 springdoc:
   swagger-ui:
     path: /api/docs
     url: /v3/api-docs
-    server-url: http://localhost:8081
+    server-url: http://localhost:8082
   show-actuator: true
 
 # Configuração global de CORS (opcional, mas útil no Swagger)
@@ -49,3 +52,18 @@ management:
   endpoint:
     health:
       show-details: always
+
+
+minio:
+  server-url: ${MINIO_SERVER_URL}
+  admin-user: ${MINIO_ADMIN_USER}
+  admin-password: ${MINIO_ADMIN_PASSWORD}
+  bucket-files: ${BUCKET_FILES_NAME}
+  bucket-images: ${BUCKET_IMAGES_NAME}
+
+keycloak:
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  server-url: ${KEYCLOAK_SERVER_URL}
+  admin-user: ${KEYCLOAK_ADMIN_USER}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
+  realm: ${KEYCLOAK_REALM}

@@ -15,6 +15,8 @@ public class CoursesService {
     private CoursesRepository coursesRepository;
 
 
+
+
     public List<Courses> getAll() { return coursesRepository.findAll(); }
     public Optional<Courses> getById(Integer id) { return coursesRepository.findById(id); }
     public Courses create(Courses course) {
@@ -51,5 +53,16 @@ public class CoursesService {
     public boolean delete(Integer id) { coursesRepository.deleteById(id);
         return false;
     }
+
+    public Courses findOrCreateByName(String name) {
+        Courses course = coursesRepository.findByName(name);
+        if (course == null) {
+            course = new Courses();          // ← você esqueceu isso
+            course.setName(name);
+            course = coursesRepository.save(course);
+        }
+        return course;
+    }
+
 
 }
