@@ -39,9 +39,6 @@ public class OpenApiConfig {
                                 .description("Servidor Local de Desenvolvimento")
                 ))
                 .tags(List.of(
-                        new Tag().name("Classes").description("Operações relacionadas a Turmas"),
-                        new Tag().name("Courses").description("Operações relacionadas a Cursos"),
-                        new Tag().name("Comments").description("Operações relacionadas a Comentários"),
                         new Tag().name("Processamento de Planilhas")
                 ))
                 .externalDocs(new ExternalDocumentation()

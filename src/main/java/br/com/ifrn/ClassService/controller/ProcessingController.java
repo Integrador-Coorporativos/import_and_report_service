@@ -1,7 +1,7 @@
 package br.com.ifrn.ClassService.controller;
 
 import br.com.ifrn.ClassService.controller.docs.ProcessingControllerDocs;
-import br.com.ifrn.ClassService.dto.ResponseImporterDTO;
+import br.com.ifrn.ClassService.dto.ImporterDTO;
 import br.com.ifrn.ClassService.services.ProcessingService;
 import io.minio.ObjectWriteResponse;
 import lombok.SneakyThrows;
@@ -46,7 +46,7 @@ public class ProcessingController implements ProcessingControllerDocs {
     @PostMapping(
             value="/uploadFile",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<List<ResponseImporterDTO>> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<List<ImporterDTO>> uploadFile(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.status(HttpStatus.CREATED).body(processingService.uploadFile(file));
     }
 

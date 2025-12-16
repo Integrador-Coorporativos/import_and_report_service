@@ -1,7 +1,7 @@
 package br.com.ifrn.ClassService;
 
-import br.com.ifrn.ClassService.file.objectstorage.MinioPropertiesConfig;
-import br.com.ifrn.ClassService.keycloak.KeycloakPropertiesConfig;
+import br.com.ifrn.ClassService.config.minio.MinioPropertiesConfig;
+import br.com.ifrn.ClassService.config.keycloak.KeycloakPropertiesConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

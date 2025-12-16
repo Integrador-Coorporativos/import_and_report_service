@@ -1,15 +1,10 @@
 package br.com.ifrn.ClassService.services;
 
-
 import br.com.ifrn.ClassService.dto.ImporterDTO;
-import br.com.ifrn.ClassService.dto.ResponseImporterDTO;
 import br.com.ifrn.ClassService.file.importer.contract.FileImporter;
 import br.com.ifrn.ClassService.file.importer.factory.FileImporterFactory;
-import br.com.ifrn.ClassService.file.objectstorage.MinioClientConfig;
-import br.com.ifrn.ClassService.keycloak.KeycloakAdminConfig;
 import br.com.ifrn.ClassService.messaging.dto.CreateClassMessageDTO;
 import br.com.ifrn.ClassService.messaging.producer.MessageProducer;
-import br.com.ifrn.ClassService.model.Classes;
 import io.minio.ObjectWriteResponse;
 import jakarta.ws.rs.core.Response;
 import lombok.SneakyThrows;
@@ -39,16 +34,13 @@ public class ProcessingService {
     FileImporterFactory importer;
 
     @Autowired
-    MinioClientConfig minioClient;
+    MinioService minioService;
 
     @Autowired
     MessageProducer messageProducer;
 
     @Autowired
-    ClassesService classesService;
-
-    @Autowired
-    KeycloakAdminConfig keycloakAdmin;
+    KeycloakAdminService keycloakAdminService;
 
     public byte[] getTemplate() throws Exception {
 
@@ -122,7 +114,7 @@ public class ProcessingService {
         return ResponseEntity.ok().build();
     }
 
-    public List<ResponseImporterDTO> uploadFile(MultipartFile file) throws IOException {
+    public List<ImporterDTO> uploadFile(MultipartFile file) throws IOException {
         if (file.isEmpty()) throw new BadRequestException("Please set a valid file");
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -133,13 +125,13 @@ public class ProcessingService {
 
             List<ImporterDTO> dataImporter = importer.importFile(inputStream).stream().toList();
 
-            List<ResponseImporterDTO> responseImporterDTOList = new ArrayList<>();
+            List<ImporterDTO> responseImporterDTOList = new ArrayList<>();
             for (ImporterDTO importerDTO : dataImporter){
                 responseImporterDTOList.add(processImporterDTO(importerDTO));
             };
 
             try (InputStream uploadStream = file.getInputStream()) {
-                minioClient.uploadFile(uploadStream, fileName);
+                minioService.uploadFile(uploadStream, fileName);
             }
             return responseImporterDTOList;
 
@@ -152,18 +144,18 @@ public class ProcessingService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseImporterDTO processImporterDTO(ImporterDTO importerDTO) throws Exception {
+    public ImporterDTO processImporterDTO(ImporterDTO importerDTO) throws Exception {
         String userId = findOrCreateUser(importerDTO);
 
 
-        Classes classes = classesService.createOrUpdateClassByClassId(
-                importerDTO.getCourse(),
-                importerDTO.getSemester(),
-                1,
-                importerDTO.getClassId(),
-                importerDTO.getShift(),
-                userId
-                );
+//        Classes classes = classesService.createOrUpdateClassByClassId(
+//                importerDTO.getCourse(),
+//                importerDTO.getSemester(),
+//                1,
+//                importerDTO.getClassId(),
+//                importerDTO.getShift(),
+//                userId
+//                );
 
         CreateClassMessageDTO producerMessageDTO = new CreateClassMessageDTO();
         producerMessageDTO.setAverage(importerDTO.getAverage());
@@ -174,8 +166,8 @@ public class ProcessingService {
 
         messageProducer.sendMessage(producerMessageDTO);
 
-        ResponseImporterDTO responseImporterDTO = new ResponseImporterDTO();
-        responseImporterDTO.setClasses(classes);
+        ImporterDTO responseImporterDTO = new ImporterDTO();
+//        responseImporterDTO.setClasses(classes);
 
 
 
@@ -187,9 +179,9 @@ public class ProcessingService {
 
     private String findOrCreateUser(ImporterDTO importerDTO) {
         String userId = "";
-        UserRepresentation user = keycloakAdmin.findKeycloakUser(importerDTO.getRegistration());
+        UserRepresentation user = keycloakAdminService.findKeycloakUser(importerDTO.getRegistration());
         if (user == null){
-            Response response = keycloakAdmin.createKeycloakUser(importerDTO.getRegistration(), importerDTO.getName());
+            Response response = keycloakAdminService.createKeycloakUser(importerDTO.getRegistration(), importerDTO.getName());
 
             if (response.getStatus() == 201) {//fazer lógica de atualização de dados do usuário
 
@@ -210,7 +202,7 @@ public class ProcessingService {
         try (InputStream uploadStream = image.getInputStream()) {
             String fileName = Optional.ofNullable(image.getOriginalFilename())
                     .orElseThrow(() -> new BadRequestException("Image mame cannot be null"));
-            ObjectWriteResponse response = minioClient.uploadImgage(uploadStream, fileName);
+            ObjectWriteResponse response = minioService.uploadImgage(uploadStream, fileName);
             return response;
         }catch (Exception e) {throw new Exception("Erro ao processar o arquivo: " + e);}
     }

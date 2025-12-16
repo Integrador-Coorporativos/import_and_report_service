@@ -1,7 +1,6 @@
 package br.com.ifrn.ClassService.services;
 
 import br.com.ifrn.ClassService.messaging.dto.CreateClassMessageDTO;
-import br.com.ifrn.ClassService.model.Classes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 @Service

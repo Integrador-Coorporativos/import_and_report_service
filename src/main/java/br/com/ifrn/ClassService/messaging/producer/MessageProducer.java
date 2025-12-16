@@ -1,6 +1,6 @@
 package br.com.ifrn.ClassService.messaging.producer;
 
-import br.com.ifrn.ClassService.messaging.config.RabbitMQConfig;
+import br.com.ifrn.ClassService.config.rabbitmq.RabbitMQConfig;
 import br.com.ifrn.ClassService.messaging.dto.CreateClassMessageDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;

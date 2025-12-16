@@ -1,37 +1,29 @@
-package br.com.ifrn.ClassService.file.objectstorage;
+package br.com.ifrn.ClassService.services;
 
-
+import br.com.ifrn.ClassService.config.minio.MinioClientConfig;
 import br.com.ifrn.ClassService.file.ContentTypes;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Configuration
-public class MinioClientConfig {
+@Service
+public class MinioService {
 
     @Autowired
-    MinioPropertiesConfig envMinio;
-
-    @Bean
-    MinioClient minioClient() {
-        return MinioClient.builder().endpoint(envMinio.serverUrl())
-                .credentials(envMinio.adminUser(), envMinio.adminPassword())
-                .build();
-    }
+    private MinioClientConfig  minioClientConfig;
 
     @SneakyThrows
     public ObjectWriteResponse uploadFile(InputStream uploadStream, String fileName) throws IOException {
-        MinioClient minioClient = minioClient();
+        MinioClient minioClient = minioClientConfig.createMinioClient();
 
         String userId = "user123"; // identificação do usuário que enviou
 
@@ -42,7 +34,7 @@ public class MinioClientConfig {
         meta.put("uploaded-by", userId);
         ObjectWriteResponse response = minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(envMinio.bucketFiles())
+                        .bucket(minioClientConfig.getEnvMinio().bucketFiles())
                         .object(objectName)
                         .stream(uploadStream, uploadStream.available(), -1)
                         .contentType(ContentTypes.APPLICATION_XLSX_VALUE)
@@ -54,8 +46,7 @@ public class MinioClientConfig {
 
     @SneakyThrows
     public ObjectWriteResponse uploadImgage(InputStream uploadStream, String fileName) throws IOException {
-        MinioClient minioClient = minioClient();
-
+        MinioClient minioClient = minioClientConfig.createMinioClient();
         String userId = "user123"; // identificação do usuário que enviou
 
         String objectName = userId + "/" + UUID.randomUUID() + "_" + fileName;
@@ -65,7 +56,7 @@ public class MinioClientConfig {
         meta.put("uploaded-by", userId);
         ObjectWriteResponse response = minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(envMinio.bucketImages())
+                        .bucket(minioClientConfig.getEnvMinio().bucketImages())
                         .object(objectName)
                         .stream(uploadStream, uploadStream.available(), -1)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -74,5 +65,4 @@ public class MinioClientConfig {
         );
         return response;
     }
-
 }

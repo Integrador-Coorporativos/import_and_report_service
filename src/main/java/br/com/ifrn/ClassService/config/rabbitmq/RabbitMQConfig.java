@@ -1,4 +1,4 @@
-package br.com.ifrn.ClassService.messaging.config;
+package br.com.ifrn.ClassService.config.rabbitmq;
 
 import br.com.ifrn.ClassService.messaging.dto.CreateClassMessageDTO;
 import org.springframework.amqp.core.Binding;

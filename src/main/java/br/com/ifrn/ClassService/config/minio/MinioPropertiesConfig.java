@@ -1,4 +1,4 @@
-package br.com.ifrn.ClassService.file.objectstorage;
+package br.com.ifrn.ClassService.config.minio;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

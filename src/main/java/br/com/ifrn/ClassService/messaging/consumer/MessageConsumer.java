@@ -1,9 +1,8 @@
 package br.com.ifrn.ClassService.messaging.consumer;
 
-import br.com.ifrn.ClassService.messaging.config.RabbitMQConfig;
+import br.com.ifrn.ClassService.config.rabbitmq.RabbitMQConfig;
 import br.com.ifrn.ClassService.messaging.dto.ConsumerMessageDTO;
 import br.com.ifrn.ClassService.messaging.dto.CreateClassMessageDTO;
-import br.com.ifrn.ClassService.model.Classes;
 import br.com.ifrn.ClassService.services.MessagingReceiveService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
