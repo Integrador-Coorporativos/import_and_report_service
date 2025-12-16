@@ -15,19 +15,21 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/swagger-resources/**",
             "/webjars/**",
-            "/api/**"
+            "/api/**",
+            "/api/processing/uploadFile"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(SWAGGER_WHITELIST).permitAll() // libera Swagger
-                        .anyRequest().authenticated()                   // protege os demais endpoints
-                )
-                .formLogin(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable()); // opcional, para testes
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
+                        .anyRequest().permitAll()
+                );
+
         return http.build();
     }
+
 }
 

@@ -30,7 +30,6 @@ public class RabbitMQConfig {
 
         DefaultClassMapper classMapper = new DefaultClassMapper();
         classMapper.setTrustedPackages("*"); // permite desserializar qualquer pacote
-        // Opcional: mapear tipos específicos se necessário
         Map<String, Class<?>> idClassMapping = new HashMap<>();
         idClassMapping.put(
                 "br.com.ifrn.EvaluationsService.evaluations_service.messaging.dto.CreateClassMessageDTO",
