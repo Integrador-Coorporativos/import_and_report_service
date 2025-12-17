@@ -12,7 +12,7 @@ commit_message.py
 .settings
 .springBeans
 .sts4-cache
-
+.env
 ### IntelliJ IDEA ###
 .idea
 *.iws
