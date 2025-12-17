@@ -14,7 +14,7 @@
     </parent>
 
     <groupId>br.com.ifrn</groupId>
-    <artifactId>ClassService</artifactId>
+    <artifactId>ImportReportService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ClassService</name>
     <description>Service for handling class operations</description>
@@ -25,6 +25,7 @@
         <lombok.version>1.18.34</lombok.version>
         <poi-ooxml.version>5.5.0</poi-ooxml.version>
         <minio.version>8.6.0</minio.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
     </properties>
 
     <dependencies>
@@ -85,6 +86,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- MAPSTRUCT -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/io.minio/minio -->
         <dependency>
             <groupId>io.minio</groupId>
@@ -130,6 +145,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

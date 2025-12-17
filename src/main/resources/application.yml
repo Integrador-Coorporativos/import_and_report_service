@@ -6,7 +6,7 @@ server:
 
 spring:
   application:
-    name: ClassService
+    name: ImportReportService
 
   config:
     import: "optional:dotenv:.env"
