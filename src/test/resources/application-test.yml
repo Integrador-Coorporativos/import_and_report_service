@@ -1,0 +1,65 @@
+server:
+  port: 0 # RANDOM_PORT (evita conflito em testes)
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # RabbitMQ → valores reais vêm do Testcontainers
+  rabbitmq:
+    host: ${spring.rabbitmq.host}
+    port: ${spring.rabbitmq.port}
+    username: ${spring.rabbitmq.username}
+    password: ${spring.rabbitmq.password}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
+  endpoint:
+    health:
+      show-details: always
+
+# =======================
+# MinIO (Testcontainers)
+# =======================
+minio:
+  endpoint: ${minio.server-url}
+  access-key: ${minio.admin-user}
+  secret-key: ${minio.admin-password}
+  bucket-files: ${minio.bucket-files}
+  bucket-images: ${minio.bucket-images}
+
+
+# =======================
+# Keycloak (Testcontainers)
+# =======================
+keycloak:
+  server-url: ${keycloak.auth-server-url}
+  admin-user: ${keycloak.admin-user}
+  admin-password: ${keycloak.admin-password}
+  realm: ${keycloak.realm}
+  client-secret: ${keycloak.client-secret}
+
