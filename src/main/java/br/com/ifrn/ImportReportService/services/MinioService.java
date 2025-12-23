@@ -1,6 +1,7 @@
 package br.com.ifrn.ImportReportService.services;
 
 import br.com.ifrn.ImportReportService.config.minio.MinioClientConfig;
+import br.com.ifrn.ImportReportService.config.security.SecurityContextService;
 import br.com.ifrn.ImportReportService.file.ContentTypes;
 import io.minio.MinioClient;
 import io.minio.ObjectWriteResponse;
@@ -8,6 +9,11 @@ import io.minio.PutObjectArgs;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +27,14 @@ public class MinioService {
     @Autowired
     private MinioClientConfig  minioClientConfig;
 
+    @Autowired
+    SecurityContextService securityContextService;
+
     @SneakyThrows
     public ObjectWriteResponse uploadFile(InputStream uploadStream, String fileName) throws IOException {
         MinioClient minioClient = minioClientConfig.createMinioClient();
 
-        String userId = "user123"; // identificação do usuário que enviou
+        String userId = securityContextService.getCurrentUserId(); // identificação do usuário que enviou
 
         String objectName = userId + "/" + UUID.randomUUID() + "_" + fileName;
         // pesquisar metodo de pegar o id do usuario apos implementar autenticacao
@@ -47,7 +56,7 @@ public class MinioService {
     @SneakyThrows
     public ObjectWriteResponse uploadImgage(InputStream uploadStream, String fileName) throws IOException {
         MinioClient minioClient = minioClientConfig.createMinioClient();
-        String userId = "user123"; // identificação do usuário que enviou
+        String userId = securityContextService.getCurrentUserId(); // identificação do usuário que enviou
 
         String objectName = userId + "/" + UUID.randomUUID() + "_" + fileName;
         // pesquisar metodo de pegar o id do usuario apos implementar autenticacao
