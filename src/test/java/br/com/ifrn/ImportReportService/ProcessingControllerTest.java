@@ -21,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
+// Adicione este import estático
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -50,7 +52,7 @@ public class ProcessingControllerTest extends BaseIntegrationTest{
     @Test
     @Order(1)
     void shouldDownloadTemplateAndCacheFile() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/processing/template"))
+        MvcResult result = mockMvc.perform(get("/api/processing/template").with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(header().string(
                         HttpHeaders.CONTENT_DISPOSITION,
@@ -93,7 +95,9 @@ public class ProcessingControllerTest extends BaseIntegrationTest{
         );
 
         mockMvc.perform(multipart("/api/processing/uploadFile")
-                        .file(multipartFile))
+                        .file(multipartFile)
+                        .with(jwt().jwt(j -> j.claim("sub", "usuario-teste")))
+                )
                 .andExpect(status().isCreated()) // Espera status 201 CREATED
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)); // Retorno esperado: JSON
     }
@@ -146,40 +150,41 @@ public class ProcessingControllerTest extends BaseIntegrationTest{
     @Test
     @Order(6)
     void shouldUploadImageToMinio() throws Exception {
-        // Criar arquivo de teste
-        Path tempImage = Files.createTempFile("template-", ".png");
-        Files.write(tempImage, new byte[]{0x0, 0x1, 0x2, 0x3}); // conteúdo fictício
+        String originalName = "imagem-teste.png";
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "image",
+                originalName,
+                MediaType.IMAGE_PNG_VALUE,
+                new byte[]{0x0, 0x1, 0x2, 0x3}
+        );
 
-        // Enviar o arquivo via MockMvc
         mockMvc.perform(
                         multipart("/api/processing/uploadImage")
-                                .file("image", Files.readAllBytes(tempImage)) // ⚠ nome do parâmetro: "image"
-                                .contentType(MediaType.MULTIPART_FORM_DATA)
+                                .file(mockFile) // Usando o objeto mockFile completo
+                                .with(jwt().jwt(j -> j.claim("sub", "usuario-teste")))
+                                .with(csrf())
                 )
                 .andExpect(status().isCreated());
 
-        // Listar objetos no bucket de imagens
-        MinioClient minioClient = getMinioClient(); // método que retorna MinioClient
+        MinioClient minioClient = getMinioClient();
         Iterable<Result<Item>> objects = minioClient.listObjects(
-                ListObjectsArgs.builder().bucket("test-images").build()
+                ListObjectsArgs.builder()
+                        .bucket("test-images")
+                        .recursive(true)
+                        .build()
         );
 
-        // Verificar se algum objeto termina com "_nomeArquivo.png"
         boolean found = false;
-        String fileName = tempImage.getFileName().toString();
-        for (Result<Item> objectResult : objects) {
-            Item item = objectResult.get();
-            if (item.objectName().endsWith("_" + fileName)) {
+        for (Result<Item> result : objects) {
+            Item item = result.get();
+            String objectName = item.objectName();
+            System.out.println("Arquivo real no MinIO: " + objectName);
+
+            if (objectName.contains(originalName)) {
                 found = true;
-                System.out.println("Arquivo encontrado no MinIO: " + item.objectName());
                 break;
             }
         }
-
-        assertTrue(found, "Imagem enviada não foi encontrada no MinIO");
+        assertTrue(found, "O arquivo foi salvo mas o teste não o encontrou (provavelmente caminho ou nome divergente)");
     }
-
-
-
-
 }

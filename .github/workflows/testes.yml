@@ -2,9 +2,9 @@ name: Testes e Relatórios
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   build-and-test:
@@ -32,16 +32,17 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Rodar testes
-        run: ./mvnw clean test
+        run: ./mvnw clean verify
 
       - name: Gerar relatório Surefire HTML
-        run: ./mvnw surefire-report:report
+        if: always()
+        run: ./mvnw surefire-report:report-only
 
       - name: Publicar relatórios como artefatos
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: relatorios-de-teste
           path: |
-            target/site/surefire-report.html
+            target/site/
             target/surefire-reports/
-
