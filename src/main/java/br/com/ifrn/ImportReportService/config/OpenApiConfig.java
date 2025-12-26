@@ -19,11 +19,10 @@ public class OpenApiConfig {
 
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
-                        .title("SADT - Class Service")
+                        .title("SADT - Import And Report Service")
                         .version("1.0.0")
                         .description("""
-                                API para monitoramento acadêmico e comportamental de turmas e alunos do IFRN.
-                                Permite gerenciamento de turmas, cursos, alunos, avaliações, desempenho e comentários.
+                                API para processamento de planilhas e geração de relatóris acadêmicos do IFRN.
                                 """)
                         .contact(new Contact()
                                 .name("Eduardo Lima")
