@@ -37,23 +37,7 @@ jobs:
       - name: Gerar relatório Surefire HTML
         if: always()
         run: ./mvnw surefire-report:report-only
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Install Trivy
-        run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-
-      - name: Build, Scan & Push Import Service
-        run: |
-          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/import_and_report_service:latest
-          docker build -t $IMAGE_NAME .
-          trivy image --exit-code 1 --severity CRITICAL $IMAGE_NAME
-          docker push $IMAGE_NAME
-
+        
       - name: Publicar relatórios como artefatos
         if: always()
         uses: actions/upload-artifact@v4
@@ -62,3 +46,22 @@ jobs:
           path: |
             target/site/
             target/surefire-reports/
+
+      - name: Login to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Install Trivy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Build, Scan & Push Import Service
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/import_and_report_service:latest
+          docker build -t $IMAGE_NAME .
+          trivy image --exit-code 1 --severity CRITICAL $IMAGE_NAME
+          docker push $IMAGE_NAME
