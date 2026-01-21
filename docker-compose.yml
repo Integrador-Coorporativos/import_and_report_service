@@ -1,26 +1,9 @@
 services:
-  postgres:
-    image: postgres:16
-    container_name: class-db
-    environment:
-      POSTGRES_DB: classdb
-      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
-      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-    ports:
-      - "5433:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - classnet
-
   import-and-report-service:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: import-and-report-service
-    depends_on:
-      academic-db:
-        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
@@ -40,19 +23,11 @@ services:
       BUCKET_IMAGES_NAME: ${BUCKET_IMAGES_NAME}
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      SPRING_SERVER_URL: ${SPRING_SERVER_URL}
+      SPRING_EXTERNAL_PORT: ${SPRING_EXTERNAL_PORT}
     ports:
       - "8082:8082"
-    networks:
-      - academic-network
-      - infra
     volumes:
       - ~/.m2:/root/.m2
-
-networks:
-  classnet:
-    driver: bridge
-  infra:
-    external: true
-
 volumes:
   pgdata:

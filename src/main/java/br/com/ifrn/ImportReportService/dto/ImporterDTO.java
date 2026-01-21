@@ -14,7 +14,7 @@ public class ImporterDTO {
     private String semester;
     private float presence;
     private float average;
-    private  float ira;
-    private  Integer rejections;
+    private float ira;
+    private Integer rejections;
 
 }
