@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: ${SPRING_EXTERNAL_PORT}
   error:
     include-message: always
     include-binding-errors: always
@@ -40,16 +40,16 @@ spring:
           keycloak:
             user-name-attribute: preferred_username
             # URL que o NAVEGADOR vai usar (fora do docker)
-            authorization-uri: http://localhost:8080/realms/ifrn/protocol/openid-connect/auth
+            authorization-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/auth
             # URL que o BACKEND vai usar (dentro do docker)
-            token-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/token
-            jwk-set-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/certs
+            token-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/token
+            jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/certs
 
             #user-info-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/userinfo
             #issuer-uri: http://keycloak:8080/realms/ifrn
       resourceserver:
         jwt:
-          jwk-set-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/certs
+          jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/certs
 
           #issuer-uri: http://keycloak:8080/realms/ifrn
 
@@ -66,14 +66,14 @@ springdoc:
   swagger-ui:
     path: /api/docs
     url: /v3/api-docs
-    server-url: http://localhost:8082
+    server-url: ${SPRING_SERVER_URL}
     config-url: /v3/api-docs/swagger-config
     oauth:
       client-id: swagger-ui
       use-pkce-with-authorization-code-grant: true
       scopes: openid profile email
-      authorization-url: http://localhost:8080/realms/ifrn/protocol/openid-connect/auth
-      token-url: http://localhost:8080/realms/ifrn/protocol/openid-connect/token
+      authorization-url: ${KEYCLOAK_SERVER_URL}realms/ifrn/protocol/openid-connect/auth
+      token-url: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/token
   show-actuator: true
 
 # Configuração global de CORS (opcional, mas útil no Swagger)

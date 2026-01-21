@@ -93,13 +93,12 @@ public abstract class BaseIntegrationTest {
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
 
-        // ---- MinIO ----
-        registry.add("minio.server-url", MINIO_CONTAINER::getS3URL);
-        registry.add("minio.admin-user", MINIO_CONTAINER::getUserName);
-        registry.add("minio.admin-password", MINIO_CONTAINER::getPassword);
-        // 🔥 ISSO resolve o erro do bucket
-        registry.add("minio.bucket-files", () -> "test-files");
-        registry.add("minio.bucket-images", () -> "test-images");
+// ---- MinIO (Ajustado para o seu Record) ----
+        registry.add("minio.serverUrl", MINIO_CONTAINER::getS3URL);
+        registry.add("minio.adminUser", MINIO_CONTAINER::getUserName);
+        registry.add("minio.adminPassword", MINIO_CONTAINER::getPassword);
+        registry.add("minio.bucketFiles", () -> "test-files");
+        registry.add("minio.bucketImages", () -> "test-images");
 
         // ---- RabbitMQ ----
         registry.add("spring.rabbitmq.host", RABBITMQ_CONTAINER::getHost);
@@ -123,7 +122,7 @@ public abstract class BaseIntegrationTest {
         registry.add("keycloak.admin-user", () -> "admin");
         registry.add("keycloak.admin-password", () -> "admin");
         registry.add("keycloak.realm", () -> "ifrn");
-        registry.add("keycloak.client-secret", () -> keycloakClientSecret);
+        registry.add("keycloak.client-secret", () -> keycloakClientSecret != null ? keycloakClientSecret : "temporary-secret");
     }
 
     // =======================
