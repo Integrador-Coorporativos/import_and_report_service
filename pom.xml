@@ -26,6 +26,8 @@
         <poi-ooxml.version>5.5.0</poi-ooxml.version>
         <minio.version>8.6.0</minio.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <actuator.version>4.0.1</actuator.version>
+        <micrometer.version>1.16.1</micrometer.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -118,6 +120,22 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
             <version>${minio.version}</version>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${actuator.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- TESTS -->
