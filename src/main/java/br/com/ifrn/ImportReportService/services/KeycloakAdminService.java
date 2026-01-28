@@ -16,13 +16,14 @@ public class KeycloakAdminService {
     @Autowired
     KeycloakAdminConfig keycloakAdminConfig;
 
-    public Response createKeycloakUser(String username, String name) {
+    public Response createKeycloakUser(String username, String name, String email) {
         Keycloak keycloak = keycloakAdminConfig.createKeycloakAdminClient();
 
         UserRepresentation user = new UserRepresentation();
         user.setUsername(username);
         user.setEnabled(true);
         user.setFirstName(name);
+        user.setEmail(email);
 
         Response response = keycloak.realm(keycloakAdminConfig.getEnvKeycloak().realm()).users().create(user);
         return response;
@@ -49,7 +50,7 @@ public class KeycloakAdminService {
         String userId = "";
         UserRepresentation user = findKeycloakUser(importerDTO.getRegistration());
         if (user == null){
-            Response response = createKeycloakUser(importerDTO.getRegistration(), importerDTO.getName());
+            Response response = createKeycloakUser(importerDTO.getRegistration(), importerDTO.getName(), importerDTO.getEmail());
 
             if (response.getStatus() == 201) {//fazer lógica de atualização de dados do usuário
 
