@@ -4,7 +4,6 @@ import br.com.ifrn.ImportReportService.controller.docs.ProcessingControllerDocs;
 import br.com.ifrn.ImportReportService.dto.ImporterDTO;
 import br.com.ifrn.ImportReportService.services.GenerateTemplateService;
 import br.com.ifrn.ImportReportService.services.ProcessingService;
-import io.minio.ObjectWriteResponse;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/processing")
@@ -58,7 +58,7 @@ public class ProcessingController implements ProcessingControllerDocs {
     @PostMapping(
             value="/uploadImage",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ObjectWriteResponse> uploadImage(@RequestParam("image") MultipartFile image) {
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile image) {
         return ResponseEntity.status(HttpStatus.CREATED).body(processingService.uploadImage(image));
     }
 
