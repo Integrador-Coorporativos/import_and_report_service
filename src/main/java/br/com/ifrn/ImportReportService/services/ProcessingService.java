@@ -1,5 +1,6 @@
 package br.com.ifrn.ImportReportService.services;
 
+import br.com.ifrn.ImportReportService.config.security.SecurityContextService;
 import br.com.ifrn.ImportReportService.dto.ImporterDTO;
 import br.com.ifrn.ImportReportService.file.importer.contract.FileImporter;
 import br.com.ifrn.ImportReportService.file.importer.factory.FileImporterFactory;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProcessingService {
@@ -34,6 +33,9 @@ public class ProcessingService {
 
     @Autowired
     KeycloakAdminService keycloakAdminService;
+
+    @Autowired
+    SecurityContextService securityContextService;
 
     @Autowired
     ImporterMapper mapper;
@@ -83,13 +85,21 @@ public class ProcessingService {
     }
 
     @SneakyThrows
-    public ObjectWriteResponse uploadImage(@RequestParam("image") MultipartFile image) {
-        try (InputStream uploadStream = image.getInputStream()) {
-            String fileName = Optional.ofNullable(image.getOriginalFilename())
-                    .orElseThrow(() -> new BadRequestException("Image mame cannot be null"));
-            ObjectWriteResponse response = minioService.uploadImgage(uploadStream, fileName);
-            return response;
-        }catch (Exception e) {throw new Exception("Erro ao processar o arquivo: " + e);}
+    public Map<String, String> uploadImage(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        ObjectWriteResponse response = minioService.uploadImgage(file, fileName);
+
+        // Monta um mapinha básico para o Front
+        Map<String, String> data = new HashMap<>();
+        data.put("bucket", response.bucket());
+        data.put("object", response.object());
+        data.put("etag", response.etag());
+
+        // Opcional: Atualiza o Keycloak apenas com o path
+        String userId = securityContextService.getCurrentUserId();
+        keycloakAdminService.updateKeycloakPicture(userId, response.object());
+
+        return data;
     }
 
     public ResponseEntity<?> getImports(){
