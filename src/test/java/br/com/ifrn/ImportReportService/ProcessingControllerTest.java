@@ -1,5 +1,6 @@
 package br.com.ifrn.ImportReportService;
 
+import br.com.ifrn.ImportReportService.services.KeycloakAdminService;
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
 import io.minio.Result;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mock;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import java.nio.file.Files;
@@ -22,6 +25,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 // Adicione este import estático
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +51,9 @@ public class ProcessingControllerTest extends BaseIntegrationTest{
 
     @Autowired
     private MinioClient minioClient;
+
+    @MockitoBean
+    private KeycloakAdminService keycloakAdminService;
 
     private static Path cachedTemplatePath;
 
@@ -150,6 +158,7 @@ public class ProcessingControllerTest extends BaseIntegrationTest{
     @Test
     @Order(6)
     void shouldUploadImageToMinio() throws Exception {
+        doNothing().when(keycloakAdminService).updateKeycloakPicture(anyString(), anyString());
         String originalName = "imagem-teste.png";
         MockMultipartFile mockFile = new MockMultipartFile(
                 "image",
@@ -160,8 +169,8 @@ public class ProcessingControllerTest extends BaseIntegrationTest{
 
         mockMvc.perform(
                         multipart("/api/processing/uploadImage")
-                                .file(mockFile) // Usando o objeto mockFile completo
-                                .with(jwt().jwt(j -> j.claim("sub", "usuario-teste")))
+                                .file(mockFile)
+                                .with(jwt().jwt(j -> j.claim("sub", "usuario-teste"))) // sub é o userId
                                 .with(csrf())
                 )
                 .andExpect(status().isCreated());
