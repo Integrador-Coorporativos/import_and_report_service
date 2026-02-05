@@ -35,9 +35,9 @@ public class GenerateTemplateService {
             XSSFSheet sheet = workbook.createSheet("Modelo Importação Alunos");
 
             String[] columns = {
-                    "Matrícula", "Nome_Completo", "Turma_ID", "Turno", "Reprovações",
-                    "Presença_%", "Notas_Baixas_Qtd", "Email", "IRA", "Curso_Completo",
-                    "periodo_referencia", "Detalhes_JSON"
+                    "Matrícula", "Nome_Completo", "Turma_ID", "Turno",
+                    "periodo_referencia", "Reprovações",
+                    "Presença_%", "Notas_Baixas_Qtd", "Email", "IRA", "Curso_Completo", "Detalhes_JSON"
             };
 
             // Estilo de Cabeçalho
@@ -115,13 +115,13 @@ public class GenerateTemplateService {
         row.createCell(1).setCellValue(faker.name().fullName().toUpperCase());        // Nome
         row.createCell(2).setCellValue(classId);                                      // Turma_ID
         row.createCell(3).setCellValue(turno);                                        // Turno
-        row.createCell(4).setCellValue(String.valueOf(rejections));                   // Reprovações
-        row.createCell(5).setCellValue(String.format("%.2f%%", presenceValue));       // Presença %
-        row.createCell(6).setCellValue(String.valueOf(lowGrades));                    // Notas Baixas
-        row.createCell(7).setCellValue(faker.internet().emailAddress());               // Email
-        row.createCell(8).setCellValue(String.format("%.2f", iraValue));              // IRA
-        row.createCell(9).setCellValue(cursoInfo);                                     // Nome Curso
-        row.createCell(10).setCellValue(random.nextInt(8) + 1 + "°");                  // Período
+        row.createCell(4).setCellValue(random.nextInt(8) + 1 + "°");                  // Período
+        row.createCell(5).setCellValue(String.valueOf(rejections));                   // Reprovações
+        row.createCell(6).setCellValue(String.format("%.2f%%", presenceValue));       // Presença %
+        row.createCell(7).setCellValue(String.valueOf(lowGrades));                    // Notas Baixas
+        row.createCell(8).setCellValue(faker.internet().emailAddress());               // Email
+        row.createCell(9).setCellValue(String.format("%.2f", iraValue));              // IRA
+        row.createCell(10).setCellValue(cursoInfo);                                     // Nome Curso
         row.createCell(11).setCellValue(generateDisciplinesJson());                   // JSON
     }
 

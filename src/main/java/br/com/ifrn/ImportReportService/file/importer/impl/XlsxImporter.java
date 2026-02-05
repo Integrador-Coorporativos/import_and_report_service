@@ -59,14 +59,15 @@ public class XlsxImporter implements FileImporter {
         importerDTO.setName(getString(row, 1));         // Nome_Completo
         importerDTO.setClassId(getString(row, 2));      // Turma_ID
         importerDTO.setShift(getString(row, 3));        // Turno
-        importerDTO.setRejections(parseInt(row, 4));    // Reprovações
-        importerDTO.setPresence(parseFloat(row, 5));    // Porcentagem_Presença
-        importerDTO.setTotalLowGrades(parseInt(row, 6));    // Quantidade de Notas baixas
-        importerDTO.setEmail(getString(row, 7));       // Email
+        importerDTO.setSemester(getString(row, 4));
+        importerDTO.setRejections(parseInt(row, 5));    // Reprovações
+        importerDTO.setPresence(parseFloat(row, 6));    // Porcentagem_Presença
+        importerDTO.setTotalLowGrades(parseInt(row, 7));    // Quantidade de Notas baixas
+        importerDTO.setEmail(getString(row, 8));       // Email
         System.out.println("Email do Usuário: " + importerDTO.getEmail());
-        importerDTO.setIra(parseFloat(row, 8));         // IRA
-        importerDTO.setCourse(simplificarCurso(getString(row, 9)));       // Curso
-        importerDTO.setSemester(getString(row, 10));
+        importerDTO.setIra(parseFloat(row, 9));         // IRA
+        importerDTO.setCourse(simplificarCurso(getString(row, 10)));       // Curso
+
         String jsonString = row.getCell(11).getStringCellValue();
         importerDTO.setDisciplineDetails(parseDisciplineDetails(jsonString));     // Detalhes da Disciplina
 
