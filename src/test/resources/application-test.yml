@@ -31,7 +31,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
+          jwk-set-uri: ${keycloak.auth-server-url}/realms/ifrn/protocol/openid-connect/certs
+          issuer-uri: ${keycloak.auth-server-url}/realms/ifrn
 
 management:
   endpoints:
@@ -46,12 +47,11 @@ management:
 # MinIO (Testcontainers)
 # =======================
 minio:
-  endpoint: ${minio.server-url}
-  access-key: ${minio.admin-user}
-  secret-key: ${minio.admin-password}
-  bucket-files: ${minio.bucket-files}
-  bucket-images: ${minio.bucket-images}
-
+  serverUrl: ${minio.serverUrl}
+  adminUser: ${minio.adminUser}
+  adminPassword: ${minio.adminPassword}
+  bucketFiles: ${minio.bucketFiles}
+  bucketImages: ${minio.bucketImages}
 
 # =======================
 # Keycloak (Testcontainers)

@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: ${SPRING_EXTERNAL_PORT}
   error:
     include-message: always
     include-binding-errors: always
@@ -11,27 +11,13 @@ spring:
   config:
     import: "optional:dotenv:.env"
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
-
   security:
     oauth2:
       client:
         registration:
           keycloak:
-            client-id: academic-service-backend
-            client-secret: NhZI2ZqkycyHPofxWaNNG9bxR1OGCdk8
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
             authorization-grant-type: authorization_code
 
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
@@ -40,20 +26,18 @@ spring:
           keycloak:
             user-name-attribute: preferred_username
             # URL que o NAVEGADOR vai usar (fora do docker)
-            authorization-uri: http://localhost:8080/realms/ifrn/protocol/openid-connect/auth
+            authorization-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/auth
             # URL que o BACKEND vai usar (dentro do docker)
-            token-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/token
-            jwk-set-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/certs
+            token-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/token
+            jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/certs
 
             #user-info-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/userinfo
             #issuer-uri: http://keycloak:8080/realms/ifrn
       resourceserver:
         jwt:
-          jwk-set-uri: http://keycloak:8080/realms/ifrn/protocol/openid-connect/certs
+          jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/certs
 
           #issuer-uri: http://keycloak:8080/realms/ifrn
-
-
 
   rabbitmq:
     host: ${RABBITMQ_HOST}
@@ -66,14 +50,14 @@ springdoc:
   swagger-ui:
     path: /api/docs
     url: /v3/api-docs
-    server-url: http://localhost:8082
+    server-url: ${SPRING_SERVER_URL}
     config-url: /v3/api-docs/swagger-config
     oauth:
       client-id: swagger-ui
       use-pkce-with-authorization-code-grant: true
       scopes: openid profile email
-      authorization-url: http://localhost:8080/realms/ifrn/protocol/openid-connect/auth
-      token-url: http://localhost:8080/realms/ifrn/protocol/openid-connect/token
+      authorization-url: ${KEYCLOAK_SERVER_URL}realms/ifrn/protocol/openid-connect/auth
+      token-url: ${KEYCLOAK_SERVER_URL}/realms/ifrn/protocol/openid-connect/token
   show-actuator: true
 
 # Configuração global de CORS (opcional, mas útil no Swagger)
@@ -85,11 +69,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,loggers
+        include: prometheus, health, info, metrics, loggers
   endpoint:
-    health:
-      show-details: always
-
+    prometheus:
+      enabled: true
 
 minio:
   server-url: ${MINIO_SERVER_URL}

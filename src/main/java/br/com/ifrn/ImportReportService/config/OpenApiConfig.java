@@ -2,7 +2,6 @@ package br.com.ifrn.ImportReportService.config;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
@@ -19,16 +18,11 @@ public class OpenApiConfig {
 
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
-                        .title("SADT - Class Service")
+                        .title("SADT - Import And Report Service")
                         .version("1.0.0")
                         .description("""
-                                API para monitoramento acadêmico e comportamental de turmas e alunos do IFRN.
-                                Permite gerenciamento de turmas, cursos, alunos, avaliações, desempenho e comentários.
+                                API para processamento de planilhas e geração de relatóris acadêmicos do IFRN.
                                 """)
-                        .contact(new Contact()
-                                .name("Eduardo Lima")
-                                .email("ferreira.lima1@escolar.ifrn.edu.br")
-                                .url("https://github.com/eduardoferreiralima"))
                         .license(new License()
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT"))
@@ -36,14 +30,17 @@ public class OpenApiConfig {
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8082")
-                                .description("Servidor Local de Desenvolvimento")
+                                .description("Servidor Local de Desenvolvimento"),
+                        new Server()
+                                .url("https://if-performance-import-and-report-service.zgx7iz.easypanel.host")
+                                .description("Servidor de Produção")
                 ))
                 .tags(List.of(
                         new Tag().name("Processamento de Planilhas")
                 ))
                 .externalDocs(new ExternalDocumentation()
                         .description("Documentação do Projeto")
-                        .url("https://github.com/Integrador-Coorporativos/class_service"));
+                        .url("https://github.com/Integrador-Coorporativos/import_and_report_service"));
         return openAPI;
     }
 }

@@ -8,7 +8,10 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class KeycloakAdminService {
@@ -16,13 +19,14 @@ public class KeycloakAdminService {
     @Autowired
     KeycloakAdminConfig keycloakAdminConfig;
 
-    public Response createKeycloakUser(String username, String name) {
+    public Response createKeycloakUser(String username, String name, String email) {
         Keycloak keycloak = keycloakAdminConfig.createKeycloakAdminClient();
 
         UserRepresentation user = new UserRepresentation();
         user.setUsername(username);
         user.setEnabled(true);
         user.setFirstName(name);
+        user.setEmail(email);
 
         Response response = keycloak.realm(keycloakAdminConfig.getEnvKeycloak().realm()).users().create(user);
         return response;
@@ -49,7 +53,7 @@ public class KeycloakAdminService {
         String userId = "";
         UserRepresentation user = findKeycloakUser(importerDTO.getRegistration());
         if (user == null){
-            Response response = createKeycloakUser(importerDTO.getRegistration(), importerDTO.getName());
+            Response response = createKeycloakUser(importerDTO.getRegistration(), importerDTO.getName(), importerDTO.getEmail());
 
             if (response.getStatus() == 201) {//fazer lógica de atualização de dados do usuário
 
@@ -63,5 +67,35 @@ public class KeycloakAdminService {
             userId = user.getId();
         }
         return userId;
+    }
+
+    public void updateKeycloakPicture(String userId, String objectPath) {
+        try {
+            Keycloak keycloak =  keycloakAdminConfig.createKeycloakAdminClient();
+            UserRepresentation user = keycloak.realm(keycloakAdminConfig.getEnvKeycloak().realm())
+                    .users()
+                    .get(userId)
+                    .toRepresentation();
+
+            // 2. Pega os atributos atuais (ou cria um novo mapa se estiver nulo)
+            Map<String, List<String>> attributes = user.getAttributes();
+            if (attributes == null) {
+                attributes = new HashMap<>();
+            }
+
+            attributes.put("picture", Collections.singletonList(objectPath));
+            user.setAttributes(attributes);
+
+            // 4. Manda o update de volta para o servidor
+            keycloak.realm(keycloakAdminConfig.getEnvKeycloak().realm())
+                    .users()
+                    .get(userId)
+                    .update(user);
+
+            System.out.println("Atributo picture atualizado com sucesso para o user: " + userId);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar o Keycloak: " + e.getMessage());
+        }
     }
 }
