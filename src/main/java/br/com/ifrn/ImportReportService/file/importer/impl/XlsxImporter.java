@@ -12,7 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
@@ -67,9 +66,11 @@ public class XlsxImporter implements FileImporter {
         System.out.println("Email do Usuário: " + importerDTO.getEmail());
         importerDTO.setIra(parseFloat(row, 8));         // IRA
         importerDTO.setCourse(simplificarCurso(getString(row, 9)));       // Curso
-
-        String jsonString = row.getCell(10).getStringCellValue();
+        importerDTO.setSemester(getString(row, 10));
+        String jsonString = row.getCell(11).getStringCellValue();
         importerDTO.setDisciplineDetails(parseDisciplineDetails(jsonString));     // Detalhes da Disciplina
+
+        System.out.println(importerDTO);
 
         return importerDTO;
     }
@@ -124,19 +125,22 @@ public class XlsxImporter implements FileImporter {
 
     private Float parseFloat(Row row, int index) {
         String value = getString(row, index);
-        if (value == null || value.isBlank()) return null;
+
+        // Se estiver vazio, retorna 0.0f para evitar que o unboxing do Java quebre
+        if (value == null || value.isBlank()) {
+            return 0.0f;
+        }
 
         try {
-            // Limpeza da string:
-            value = value.replace(",", ".")   // Normaliza separador decimal
-                    .replace("%", "")    // Remove o símbolo de porcentagem
-                    .trim();             // Remove espaços extras
+            // Limpeza agressiva: remove tudo que não for número, ponto ou sinal de menos
+            value = value.replace(",", ".")
+                    .replace("%", "")
+                    .trim();
 
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
-            // Log de erro útil para identificar qual linha/valor quebrou
-            System.err.println("Erro ao converter valor '" + value + "' na coluna " + index);
-            return null;
+            System.err.println("ERRO DE CONVERSÃO: Coluna " + index + " tem valor inválido: [" + value + "]");
+            return 0.0f; // Retorna padrão em caso de erro de digitação na planilha
         }
     }
 
@@ -170,11 +174,11 @@ public class XlsxImporter implements FileImporter {
         if (cursoRaw == null || cursoRaw.isBlank()) {
             return "N/A";
         }
-
-        // Extrai o primeiro bloco antes do espaço (ex: "09404")
-        String codigo = cursoRaw.trim().split(" ")[0];
-
-        // Retorna o nome amigável do Map, ou o próprio código caso não esteja mapeado
-        return CURSOS_MAP.getOrDefault(codigo, "Curso " + codigo);
+        String cursoTrim = cursoRaw.trim();
+        if (cursoTrim.matches("^\\d+.*")) {
+            String codigo = cursoTrim.split("\\s+")[0];
+            return CURSOS_MAP.getOrDefault(codigo, cursoTrim);
+        }
+        return cursoTrim;
     }
 }
